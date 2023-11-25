@@ -8,8 +8,8 @@ async function main() {
   const [owner] = await ethers.getSigners()
   var signer = owner
 
-  const v3Factory = '0x2546BcD3c84621e976D8185a91A922aE77ECEc30' //test
-  const weth = '0x2546BcD3c84621e976D8185a91A922aE77ECEc30' //test
+  const v3Factory = '0x2d5083a170977395F81F32FeC483616FEbDA177b' //test
+  const weth = '0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889' //test
 
   const QuouterV2 = await ethers.getContractFactory('QuoterV2')
   const quouterV2 = await QuouterV2.deploy(v3Factory, weth)
@@ -45,6 +45,9 @@ async function main() {
 
   console.log('deploy V3Migrator ', v3Migrator.address)
 
+  const SwapRouter = await ethers.getContractFactory('SwapRouter')
+  const swapRouter = await SwapRouter.deploy(v3Factory, weth)
+
   const contracts = [
     {
       quouterV2: quouterV2.address,
@@ -64,10 +67,13 @@ async function main() {
     {
       V3Migrator: v3Migrator.address,
     },
+    {
+      swapRouter: swapRouter.address,
+    },
   ]
 
   var fs = require('fs')
-  fs.writeFileSync('address.json', JSON.stringify({contracts}, null, 4))
+  fs.writeFileSync('address.json', JSON.stringify({ contracts }, null, 4))
 }
 
 main().catch((error) => {
