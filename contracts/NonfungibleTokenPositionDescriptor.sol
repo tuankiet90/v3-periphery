@@ -16,19 +16,18 @@ import './libraries/TokenRatioSortOrder.sol';
 /// @title Describes NFT token positions
 /// @notice Produces a string containing the data URI for a JSON metadata string
 contract NonfungibleTokenPositionDescriptor is INonfungibleTokenPositionDescriptor {
-    address private constant DAI = 0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063;
-    address private constant USDC = 0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359;
-    address private constant USDT = 0xc2132D05D31c914a87C6611C10748AEb04B58e8F;
-   // address private constant TBTC = 0x8dAEBADE922dF735c38C80C7eBD708Af50815fAa;
-    address private constant WBTC = 0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6;
+    address private constant DAI = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
+    address private constant USDC = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
+    address private constant USDT = 0xdAC17F958D2ee523a2206206994597C13D831ec7;
+    address private constant TBTC = 0x8dAEBADE922dF735c38C80C7eBD708Af50815fAa;
+    address private constant WBTC = 0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599;
 
     address public immutable WETH9;
-    /// @dev A null-terminated string
-  //  bytes32 public immutable nativeCurrencyLabelBytes;
 
     constructor(address _WETH9) {
         WETH9 = _WETH9;
     }
+
     /// @inheritdoc INonfungibleTokenPositionDescriptor
     function tokenURI(INonfungiblePositionManager positionManager, uint256 tokenId)
         external
@@ -58,8 +57,10 @@ contract NonfungibleTokenPositionDescriptor is INonfungibleTokenPositionDescript
                     tokenId: tokenId,
                     quoteTokenAddress: quoteTokenAddress,
                     baseTokenAddress: baseTokenAddress,
-                    quoteTokenSymbol: SafeERC20Namer.tokenSymbol(quoteTokenAddress),
-                    baseTokenSymbol: SafeERC20Namer.tokenSymbol(baseTokenAddress),
+                    quoteTokenSymbol: quoteTokenAddress == WETH9
+                        ? 'ETH'
+                        : SafeERC20Namer.tokenSymbol(quoteTokenAddress),
+                    baseTokenSymbol: baseTokenAddress == WETH9 ? 'ETH' : SafeERC20Namer.tokenSymbol(baseTokenAddress),
                     quoteTokenDecimals: IERC20Metadata(quoteTokenAddress).decimals(),
                     baseTokenDecimals: IERC20Metadata(baseTokenAddress).decimals(),
                     flipRatio: _flipRatio,
@@ -92,8 +93,8 @@ contract NonfungibleTokenPositionDescriptor is INonfungibleTokenPositionDescript
                 return TokenRatioSortOrder.NUMERATOR_MORE;
             } else if (token == DAI) {
                 return TokenRatioSortOrder.NUMERATOR;
-            // } else if (token == TBTC) {
-            //     return TokenRatioSortOrder.DENOMINATOR_MORE;
+            } else if (token == TBTC) {
+                return TokenRatioSortOrder.DENOMINATOR_MORE;
             } else if (token == WBTC) {
                 return TokenRatioSortOrder.DENOMINATOR_MOST;
             } else {
