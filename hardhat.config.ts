@@ -116,8 +116,8 @@ export default {
     },
     deploy: {
       url: process.env.RPC_ENDPOINT,
-      gasPrice: 10000000000,
-      gas: 10000000,
+      // gasPrice: 10000000000,
+      // gas: 10000000,
       chainId: Number(process.env.CHAIN_ID),
       accounts: [process.env.PKEY as string],
       allowUnlimitedContractSize: true,
